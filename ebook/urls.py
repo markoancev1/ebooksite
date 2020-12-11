@@ -21,6 +21,7 @@ from django.conf.urls.static import static
 from modulebook import views
 from django.contrib.auth import views as auth_views
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.book_list, name='book_list'),
