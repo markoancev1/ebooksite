@@ -1,0 +1,17 @@
+% extends "base.html" %}
+
+{% block content %}
+
+    <!--Password Reset Complete-->
+    <div class="container p-4">
+        <h2 class="font-weight-bold mt-3">Email Confirmation sent</h2>
+        <hr>
+        <p>We have sent an email with a confirmation link to your email address. In order to complete the sign-up
+            process, please click the confirmation link.
+
+            If you do not receive a confirmation email, please check your spam folder. Also, please verify that you
+            entered a valid email address in our sign-up form.</p>
+        <a href="{% url 'book_list' %}" class="btn btn-primary">Return Home</a>
+    </div>
+
+{% endblock %}

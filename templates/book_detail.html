@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12 col-sm-6">
+                <img class="img-fluid" src="{{ book.ebook_preview_image.url }}">
+            </div>
+            <div class="col-12 col-sm-12 col-md-6">
+                <h1 class="text-center mt-3">{{ book.ebook_title }}</h1>
+                <p class="text-center mt-3">{{ book.ebook_description }}</p>
+            </div>
+        </div>
+        <div class="text-center">
+            <a class="mt-5 btn btn-success" href="{% url 'book_list' %}">Back to List</a>
+        </div>
+
+    </div>
+{% endblock %}
