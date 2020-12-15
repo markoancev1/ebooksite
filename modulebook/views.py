@@ -20,7 +20,8 @@ from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_bytes
 from django.core.mail import send_mail, BadHeaderError, EmailMessage
 from django.contrib.auth.decorators import user_passes_test, login_required
-
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models import Q
 # Create your views here.
 
 from .forms import EbookForm
@@ -47,8 +48,23 @@ def upload_book(request):
 
 def book_list(request):
     books = Ebook.objects.all()
+
+    query = request.GET.get("q")
+    if query:
+        books = books.filter(Q(ebook_title__icontains=query)).distinct()
+
+    page = request.GET.get('page', 1)
+
+    paginator = Paginator(books, 2)
+
+    try:
+        ebooks = paginator.page(page)
+    except PageNotAnInteger:
+        ebooks = paginator.page(1)
+    except EmptyPage:
+        ebooks = paginator.page(paginator.num_pages)
     return render(request, 'book_list.html', {
-        'books': books
+        'books': ebooks
     })
 
 
@@ -198,3 +214,4 @@ def profile(request):
     }
 
     return render(request, 'user/profile.html', context)
+

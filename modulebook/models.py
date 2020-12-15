@@ -19,7 +19,6 @@ class Ebook(models.Model):
         return reverse("albums:album-list", kwargs={"id": self.id})
 
 
-
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     image = models.ImageField(default='default.jpg', upload_to='profile/')
