@@ -5,7 +5,8 @@ from django.urls import reverse_lazy
 from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.models import User
 from django.db.models.query_utils import Q
-from modulebook.forms import SignUpForm
+from modulebook.forms import SignUpForm, UserUpdateForm, ProfileUpdateForm
+from django.core.files.storage import FileSystemStorage
 from django.http import HttpResponse
 from django.utils.encoding import force_text
 from .token_generator import account_activation_token
@@ -18,6 +19,8 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_bytes
 from django.core.mail import send_mail, BadHeaderError, EmailMessage
+from django.contrib.auth.decorators import user_passes_test, login_required
+
 # Create your views here.
 
 from .forms import EbookForm
@@ -28,6 +31,7 @@ class Home(TemplateView):
     template_name = 'home.html'
 
 
+@user_passes_test(lambda u: u.is_superuser)
 def upload_book(request):
     if request.method == 'POST':
         form = EbookForm(request.POST, request.FILES)
@@ -48,6 +52,7 @@ def book_list(request):
     })
 
 
+@user_passes_test(lambda u: u.is_superuser)
 def delete_book(request, pk):
     if request.method == 'POST':
         book = Ebook.objects.get(pk=pk)
@@ -62,6 +67,7 @@ def detail_view(request, pk):
     })
 
 
+@user_passes_test(lambda u: u.is_superuser)
 def update_book(request, pk):
     context = {}
     obj = get_object_or_404(Ebook, id=pk)
@@ -167,3 +173,27 @@ def password_reset_request(request):
     password_reset_form = PasswordResetForm()
     return render(request=request, template_name="user/password_reset.html",
                   context={"password_reset_form": password_reset_form})
+
+
+@login_required
+def profile(request):
+    if request.method == 'POST':
+        u_form = UserUpdateForm(request.POST, instance=request.user)
+        p_form = ProfileUpdateForm(request.POST,
+                                   request.FILES,
+                                   instance=request.user.profile)
+        if u_form.is_valid() and p_form.is_valid():
+            u_form.save()
+            p_form.save()
+            return redirect('profile')
+
+    else:
+        u_form = UserUpdateForm(instance=request.user)
+        p_form = ProfileUpdateForm(instance=request.user.profile)
+
+    context = {
+        'u_form': u_form,
+        'p_form': p_form
+    }
+
+    return render(request, 'user/profile.html', context)

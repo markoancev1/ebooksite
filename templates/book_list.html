@@ -4,9 +4,11 @@
 
     {% block content_header %}
         <h2>Books</h2>
-        <p>
-            <a href="{% url 'upload_book' %}" class="btn btn-primary">Upload book</a>
-        </p>
+        {% if user.is_superuser %}
+            <p>
+                <a href="{% url 'upload_book' %}" class="btn btn-primary">Upload book</a>
+            </p>
+        {% endif %}
     {% endblock %}
 
     <table class="table table-borderless mt-5 table-responsive-md">
@@ -30,16 +32,16 @@
                 </td>
                 <td class="align-middle">{{ book.ebook_title }}</td>
                 <td class="align-middle">
-                    <a href="{{ book.ebook_document.url }}" class="btn btn-primary btn-sm" target="_blank">
+                    <a href="{{ book.ebook_document.url }}" class="btn btn-primary btn-download" target="_blank">
                         Download PDF
                     </a>
                 </td>
                 <td class="align-middle">
-                    {% if user.is_authenticated %}
+                    <a href="{% url 'detail_book' book.pk %}"
+                       class="btn btn-primary btn-sm btn-block m-2">Details</a>
+                    {% if user.is_superuser %}
                         <a href="{% url 'update_book' pk=book.pk %}"
                            class="btn btn-success btn-sm btn-block m-2">Update</a>
-                        <a href="{% url 'detail_book' book.pk %}"
-                           class="btn btn-primary btn-sm btn-block m-2">Details</a>
                         <form method="post" action="{% url 'delete_book' book.pk %}">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-danger btn-sm btn-block m-2">Delete</button>

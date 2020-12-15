@@ -21,7 +21,6 @@ from django.conf.urls.static import static
 from modulebook import views
 from django.contrib.auth import views as auth_views
 
-
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.book_list, name='book_list'),
@@ -30,6 +29,7 @@ urlpatterns = [
     path('books/<int:pk>/Detail', views.detail_view, name='detail_book'),
     path('books/<int:pk>/Update', views.update_book, name='update_book'),
     path("register", views.register_request, name="register"),
+    path('profile/', views.profile, name='profile'),
     path('activate/<slug:uidb64>/<slug:token>/', views.activate_account, name='activate'),
     path("login", views.login_request, name="login"),
     path("logout", views.logout_request, name="logout"),

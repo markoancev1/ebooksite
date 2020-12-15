@@ -1,11 +1,12 @@
-{% load static %}<!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
+{% load static %}
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
           integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/app.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static "css/app.css" %}">
     <title>{% block title %}My Site{% endblock %}</title>
 </head>
 <body>
@@ -33,7 +34,7 @@
                         <a class="nav-link" href="{% url 'password_reset' %}">Password Reset</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Welcome, {{ user.username }}</a>
+                        <a class="nav-link" href="{% url 'profile' %}">Welcome, {{ user.username }}</a>
                     </li>
 
                 {% else %}
