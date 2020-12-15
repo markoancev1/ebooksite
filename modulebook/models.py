@@ -3,6 +3,7 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 from PIL import Image
 
+
 # Create your models here.
 
 class Ebook(models.Model):
@@ -20,13 +21,13 @@ class Ebook(models.Model):
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    image = models.ImageField( upload_to='profile/')
+    image = models.ImageField(default='default.jpg', upload_to='profile/')
 
     def __str__(self):
         return f'{self.user.username} Profile'
 
-    def save(self):
-        super().save()
+    def save(self, *args, **kwargs):
+        super(Profile, self).save(*args, **kwargs)
 
         img = Image.open(self.image.path)
 

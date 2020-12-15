@@ -24,7 +24,7 @@ from django.contrib.auth.decorators import user_passes_test, login_required
 # Create your views here.
 
 from .forms import EbookForm
-from .models import Ebook
+from .models import Ebook, Profile
 
 
 class Home(TemplateView):
@@ -177,6 +177,7 @@ def password_reset_request(request):
 
 @login_required
 def profile(request):
+    Profile.objects.get_or_create(user=request.user)
     if request.method == 'POST':
         u_form = UserUpdateForm(request.POST, instance=request.user)
         p_form = ProfileUpdateForm(request.POST,
