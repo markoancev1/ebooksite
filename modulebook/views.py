@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from django.db.models.query_utils import Q
 from modulebook.forms import SignUpForm, UserUpdateForm, ProfileUpdateForm
 from django.core.files.storage import FileSystemStorage
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.utils.encoding import force_text
 from .token_generator import account_activation_token
 from django.contrib.auth.forms import AuthenticationForm
@@ -22,6 +22,7 @@ from django.core.mail import send_mail, BadHeaderError, EmailMessage
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
+from django.urls import reverse
 # Create your views here.
 
 from .forms import EbookForm
@@ -48,7 +49,6 @@ def upload_book(request):
 
 def book_list(request):
     books = Ebook.objects.all()
-
     query = request.GET.get("q")
     if query:
         books = books.filter(Q(ebook_title__icontains=query)).distinct()
@@ -64,7 +64,7 @@ def book_list(request):
     except EmptyPage:
         ebooks = paginator.page(paginator.num_pages)
     return render(request, 'book_list.html', {
-        'books': ebooks
+        'books': ebooks,
     })
 
 
@@ -78,8 +78,14 @@ def delete_book(request, pk):
 
 def detail_view(request, pk):
     book = get_object_or_404(Ebook, pk=pk)
+    likes_connected = get_object_or_404(Ebook, id=pk)
+    liked = False
+    if likes_connected.likes.filter(id=request.user.id).exists():
+        liked = True
     return render(request, "book_detail.html", {
-        "book": book
+        "book": book,
+        'number_of_likes': likes_connected.number_of_likes(),
+        'book_is_liked': liked
     })
 
 
@@ -215,3 +221,12 @@ def profile(request):
 
     return render(request, 'user/profile.html', context)
 
+
+def book_like(request, pk):
+    post = get_object_or_404(Ebook, id=request.POST.get('book_id'))
+    if post.likes.filter(id=request.user.id).exists():
+        post.likes.remove(request.user)
+    else:
+        post.likes.add(request.user)
+
+    return HttpResponseRedirect(reverse('detail_book', args=[str(pk)]))

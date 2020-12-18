@@ -1,30 +1,31 @@
 
 body {
-  background-color: #5c848e;
+    background-color: #5c848e;
 }
 
 .account-img {
-  height: 125px;
-  width: 125px;
-  margin-right: 20px;
-  margin-bottom: 16px;
+    height: 125px;
+    width: 125px;
+    margin-right: 20px;
+    margin-bottom: 16px;
 }
+
 .btn-download {
-  background-color: DodgerBlue;
-  border: none;
-  color: white;
-  padding: 12px 30px;
-  cursor: pointer;
-  font-size: 20px;
+    background-color: DodgerBlue;
+    border: none;
+    color: white;
+    padding: 12px 30px;
+    cursor: pointer;
+    font-size: 20px;
 }
 
 /* Darker background on mouse-over */
 .btn-download:hover {
-  background-color: RoyalBlue;
+    background-color: RoyalBlue;
 }
 
-.dropdown-item{
-  background-color: #decdc3;
+.dropdown-item {
+    background-color: #decdc3;
 }
 
 .pagination {
@@ -59,4 +60,11 @@ body {
 .pagination-previous,
 .pagination-next {
     color: #3354AA;
+}
+
+.navbar-img {
+    max-height: 30px;
+    max-height: 30px;
+    width: auto;
+    vertical-align: middle;
 }

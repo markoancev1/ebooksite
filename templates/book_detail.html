@@ -14,6 +14,23 @@
         <div class="text-center">
             <a class="mt-5 btn btn-success" href="{% url 'book_list' %}">Back to List</a>
         </div>
+        {% if user.is_authenticated %}
+            <form action="{% url 'book_like' book.id %}" method="POST">
+                {% csrf_token %}
+
+                {% if book_is_liked %}
+                    <button type="submit" name="book_id" value="{{ book.id }}" class="btn btn-info">Unlike
+                    </button>
+                {% else %}
+                    <button type="submit" name="book_id" value="{{ book.id }}" class="btn btn-info">Like</button>
+                {% endif %}
+            </form>
+        {% else %}
+            <a class="btn btn-outline-info" href="{% url 'login' %}">Log in to like this
+                article!</a><br>
+        {% endif %}
+        <strong class="text-secondary">{{ number_of_likes }} Like{{ number_of_likes|pluralize }}</strong>
+
 
     </div>
 {% endblock %}

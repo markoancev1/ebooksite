@@ -11,12 +11,12 @@
         {% endif %}
     {% endblock %}
 
-    <form method="GET" >
-    <div class="input-field">
-        <input type="text" name="q" value="{{ request.GET.q }}" placeholder="Search Here...">
-       <button class="btn" type="submit" name="action">Search</button>
-    </div>
-</form>
+    <form method="GET">
+        <div class="input-field">
+            <input type="text" name="q" value="{{ request.GET.q }}" placeholder="Search Here...">
+            <button class="btn" type="submit" name="action">Search</button>
+        </div>
+    </form>
 
 
     <table class="table table-borderless mt-5 table-responsive-md">
@@ -25,6 +25,7 @@
             <th>Cover</th>
             <th>Title</th>
             <th>Download</th>
+            <th>Likes</th>
             <th>Action</th>
         </tr>
         </thead>
@@ -44,9 +45,11 @@
                         <i class="fa fa-download"></i> Download PDF
                     </a>
                 </td>
+                <td class="align-middle"><strong class="text-secondary">{{book.likes.all.count}} Like{{ book.likes.all.count|pluralize }}</strong></td>
                 <td class="align-middle">
                     <a href="{% url 'detail_book' book.pk %}"
                        class="btn btn-primary btn-sm btn-block m-2">Details</a>
+
                     {% if user.is_superuser %}
                         <a href="{% url 'update_book' pk=book.pk %}"
                            class="btn btn-success btn-sm btn-block m-2">Update</a>
@@ -55,6 +58,7 @@
                             <button type="submit" class="btn btn-danger btn-sm btn-block m-2">Delete</button>
                         </form>
                     {% endif %}
+
                 </td>
             </tr>
         {% endfor %}
@@ -64,7 +68,8 @@
     {% if books.has_previous %}
         <a class="pagination-action" href="?page=1{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">
             <i class="fa fa-angle-double-left" aria-hidden="true"></i> </a>
-        <a class="pagination-action" href="?page={{ books.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %} ">
+        <a class="pagination-action"
+           href="?page={{ books.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %} ">
             <i class="fa fa-angle-left" aria-hidden="true"></i>
         </a>
     {% endif %}
@@ -72,14 +77,17 @@
         {% if books.number == num %}
             <span class="pagination-number pagination-current">{{ num }}</span>
         {% elif num > books.number|add:'-3' and num < books.number|add:'3' %}
-            <a class="pagination-number" href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">{{ num }}</a>
+            <a class="pagination-number"
+               href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">{{ num }}</a>
         {% endif %}
     {% endfor %}
     {% if books.has_next %}
-        <a class="pagination-action" href="?page={{ books.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %} ">
+        <a class="pagination-action"
+           href="?page={{ books.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %} ">
             <i class="fa fa-angle-right" aria-hidden="true"></i>
         </a>
-        <a class="pagination-action" href="?page={{ books.paginator.num_pages }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">
+        <a class="pagination-action"
+           href="?page={{ books.paginator.num_pages }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">
             <i class="fa fa-angle-double-right" aria-hidden="true"></i>
         </a>
     {% endif %}

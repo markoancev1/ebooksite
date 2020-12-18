@@ -11,12 +11,13 @@ class Ebook(models.Model):
     ebook_description = models.TextField(max_length=750)
     ebook_preview_image = models.ImageField(upload_to="images/")
     ebook_document = models.FileField(upload_to="books/")
+    likes = models.ManyToManyField(User, related_name="likes")
+
+    def number_of_likes(self):
+        return self.likes.count()
 
     def __str__(self):
         return self.ebook_title
-
-    def get_absolute_url(self):
-        return reverse("albums:album-list", kwargs={"id": self.id})
 
 
 class Profile(models.Model):
