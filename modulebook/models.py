@@ -13,6 +13,9 @@ class Ebook(models.Model):
     ebook_document = models.FileField(upload_to="books/")
     likes = models.ManyToManyField(User, related_name="likes")
 
+    def get_absolute_url(self):
+        return reverse('detail_book', kwargs={'pk': self.pk})
+
     def number_of_likes(self):
         return self.likes.count()
 
@@ -36,3 +39,18 @@ class Profile(models.Model):
             output_size = (300, 300)
             img.thumbnail(output_size)
             img.save(self.image.path)
+
+
+class Comment(models.Model):
+    post = models.ForeignKey(Ebook, on_delete=models.CASCADE, related_name='comments')
+    name = models.ForeignKey(User, on_delete=models.CASCADE, related_name='users')
+    email = models.EmailField()
+    body = models.TextField()
+    created_date = models.DateTimeField(auto_now_add=True)
+    active = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ['created_date']
+
+    def __str__(self):
+        return 'Comment {} by {}'.format(self.body, self.name)

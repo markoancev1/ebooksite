@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
-
+{% load i18n %}
 {% block content %}
 
     {% block content_header %}
-        <h2>Books</h2>
+        <h2>{% trans 'Books' %}</h2>
         {% if user.is_superuser %}
             <p>
-                <a href="{% url 'upload_book' %}" class="btn btn-primary">Upload book</a>
+                <a href="{% url 'upload_book' %}" class="btn btn-primary">{% trans 'Upload Book' %}</a>
             </p>
         {% endif %}
     {% endblock %}
@@ -14,7 +14,7 @@
     <form method="GET">
         <div class="input-field">
             <input type="text" name="q" value="{{ request.GET.q }}" placeholder="Search Here...">
-            <button class="btn" type="submit" name="action">Search</button>
+            <button class="btn" type="submit" name="action">{% trans 'Search' %}</button>
         </div>
     </form>
 
@@ -22,11 +22,11 @@
     <table class="table table-borderless mt-5 table-responsive-md">
         <thead>
         <tr>
-            <th>Cover</th>
-            <th>Title</th>
-            <th>Download</th>
-            <th>Likes</th>
-            <th>Action</th>
+            <th>{% trans 'Cover' %}</th>
+            <th>{% trans 'Title' %}</th>
+            <th>{% trans 'Download' %}</th>
+            <th>{% trans 'Likes' %}</th>
+            <th>{% trans 'Action' %}</th>
         </tr>
         </thead>
         <tbody>
@@ -42,20 +42,20 @@
                 <td class="align-middle">{{ book.ebook_title }}</td>
                 <td class="align-middle">
                     <a href="{{ book.ebook_document.url }}" class="btn btn-primary btn-download" target="_blank">
-                        <i class="fa fa-download"></i> Download PDF
+                        <i class="fa fa-download"></i> {% trans 'Download PDF' %}
                     </a>
                 </td>
                 <td class="align-middle"><strong class="text-secondary">{{book.likes.all.count}} Like{{ book.likes.all.count|pluralize }}</strong></td>
                 <td class="align-middle">
                     <a href="{% url 'detail_book' book.pk %}"
-                       class="btn btn-primary btn-sm btn-block m-2">Details</a>
+                       class="btn btn-primary btn-sm btn-block m-2">{% trans 'Details' %}</a>
 
                     {% if user.is_superuser %}
                         <a href="{% url 'update_book' pk=book.pk %}"
-                           class="btn btn-success btn-sm btn-block m-2">Update</a>
+                           class="btn btn-success btn-sm btn-block m-2"> {% trans 'Update' %}</a>
                         <form method="post" action="{% url 'delete_book' book.pk %}">
                             {% csrf_token %}
-                            <button type="submit" class="btn btn-danger btn-sm btn-block m-2">Delete</button>
+                            <button type="submit" class="btn btn-danger btn-sm btn-block m-2">{% trans 'Delete' %}</button>
                         </form>
                     {% endif %}
 

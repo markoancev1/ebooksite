@@ -22,11 +22,12 @@ from django.core.mail import send_mail, BadHeaderError, EmailMessage
 from django.contrib.auth.decorators import user_passes_test, login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
+from django.utils import translation
 from django.urls import reverse
 # Create your views here.
 
-from .forms import EbookForm
-from .models import Ebook, Profile
+from .forms import EbookForm, CommentForm
+from .models import Ebook, Profile, Comment
 
 
 class Home(TemplateView):
@@ -49,6 +50,7 @@ def upload_book(request):
 
 def book_list(request):
     books = Ebook.objects.all()
+    # translation.activate('mk').request.LANGUAGE_CODE = translation.get.language()
     query = request.GET.get("q")
     if query:
         books = books.filter(Q(ebook_title__icontains=query)).distinct()
@@ -78,6 +80,22 @@ def delete_book(request, pk):
 
 def detail_view(request, pk):
     book = get_object_or_404(Ebook, pk=pk)
+
+    comments = book.comments.filter(active=True)
+    new_comment = None
+    # Comment posted
+    if request.method == 'POST':
+        comment_form = CommentForm(data=request.POST)
+        if comment_form.is_valid():
+            # Create Comment object but don't save to database yet
+            new_comment = comment_form.save(commit=False)
+            # Assign the current post to the comment
+            new_comment.post = book
+            new_comment.name = request.user
+            # Save the comment to the database
+            new_comment.save()
+    else:
+        comment_form = CommentForm()
     likes_connected = get_object_or_404(Ebook, id=pk)
     liked = False
     if likes_connected.likes.filter(id=request.user.id).exists():
@@ -85,11 +103,13 @@ def detail_view(request, pk):
     return render(request, "book_detail.html", {
         "book": book,
         'number_of_likes': likes_connected.number_of_likes(),
-        'book_is_liked': liked
+        'book_is_liked': liked,
+        'comments': comments,
+        'new_comment': new_comment,
+        'comment_form': comment_form
     })
 
 
-@user_passes_test(lambda u: u.is_superuser)
 def update_book(request, pk):
     context = {}
     obj = get_object_or_404(Ebook, id=pk)
@@ -230,3 +250,11 @@ def book_like(request, pk):
         post.likes.add(request.user)
 
     return HttpResponseRedirect(reverse('detail_book', args=[str(pk)]))
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def delete_comment(request, pk):
+    if request.method == 'POST':
+        book = get_object_or_404(Comment, pk=pk)
+        book.delete()
+    return redirect('detail_book', pk=book.post_id)

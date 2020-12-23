@@ -68,3 +68,7 @@ body {
     width: auto;
     vertical-align: middle;
 }
+
+.comment {
+    margin: 20px 0px 20px 20px;
+}
